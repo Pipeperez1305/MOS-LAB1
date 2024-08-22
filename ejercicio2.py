@@ -7,17 +7,11 @@ from pyomo.opt import SolverFactory
 Model = ConcreteModel()
 
 # Data de entrada
+numTrabajadores=3
 numTrabajos=5
-p=RangeSet(1, numTrabajos)
+p=RangeSet(1, numTrabajadores)
+t=RangeSet(1, numTrabajos)
 
-# PARA EL PROBLEMA 1 PONEMOS UN DICCIONARIO CON EL NUMERO DE TAREA Y UNA TUPLA CON EL PUNTAJE Y LA PRIORIDAD
-# 7 MAXIMO
-# 6 ALTO
-# 5 MEDIO ALTO
-# 4 MEDIO
-# 3 MEDIO BAJO
-# 2 BAJO 
-# 1 MINIMO
 
 trabajadores = {
     1: 8,
@@ -34,13 +28,24 @@ trabajos = {
 }
 
 # Variable de decisión
-Model.x = Var(p, domain=Binary)
+Model.x = Var(p,t, domain=Binary)
+
 
 # Función objetivo
-Model.obj = Objective(expr = sum(Model.x[i]*valor[i][1] for i in p), sense=maximize)
+Model.obj = Objective(expr = sum(Model.x[i, j] * trabajos[j][0] for i in p for j in t), sense = maximize)
 
 # Restricciones
-Model.res1 = Constraint(expr = sum(Model.x[i]*valor[i][0] for i in p) <=52)
+
+def regla1 (Model, j):
+    return sum(Model.x[i,j] for i in p) == 1
+
+Model.res1 = Constraint(t, rule=regla1)
+
+def regla2 (Model, i):
+    return sum(Model.x[i,j] * trabajos[j][1] for j in t) <= trabajadores[i]
+
+Model.res2 = Constraint(p, rule=regla2)
+
 
 # Especificación del solver
 SolverFactory('glpk').solve(Model)
@@ -50,5 +55,4 @@ Model.display()
 
 
     
-
 
