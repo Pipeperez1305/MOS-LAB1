@@ -1,4 +1,5 @@
 from pyomo.environ import *
+import matplotlib.pyplot as plt
 
 # Inicializar el modelo
 Model = ConcreteModel()
@@ -64,3 +65,28 @@ SolverFactory('glpk').solve(Model)
 
 
 Model.display()
+
+#Data for plotting
+resources = list(recursos.keys())
+values = [recursos[r][0] for r in resources]
+
+#Selection status for each plane
+selected = [[Model.x[i,j]() for j in resources] for i in p]
+
+# Creating a stacked bar chart
+colors = ['red', 'blue', 'green']
+
+# Plot the resource allocation
+for i, j in enumerate(p):
+    plt.bar(resources, [v * sel for v, sel in zip(values, selected[i])], color=colors[i], label=f'Plane {j}', bottom=[sum(selected[k][r]*values[r] for k in range(i)) for r in range(len(resources))])
+
+plt.xlabel("Recursos")
+plt.ylabel("Valor")
+plt.title("Asignación de recursos a aviones")
+
+# labels 
+rec=["Alimentos Básicos", "Medicinas", "Equipos Médicos", "Agua Potable", "Mantas"]
+plt.xticks(range(1,len(resources)+1),rec)
+plt.legend()
+
+plt.show()
