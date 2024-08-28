@@ -3,7 +3,7 @@ from pyomo.environ import *
 # Inicializar el modelo
 Model = ConcreteModel()
 
-# Datos de entrada
+# Data de entrada
 numAviones = 3
 numRecursos = 5
 p = RangeSet(1, numAviones)
