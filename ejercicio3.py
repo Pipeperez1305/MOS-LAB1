@@ -26,7 +26,7 @@ recursos = {
 # Variable de decisión
 Model.x = Var(p, t, domain=Binary)
 
-# Variable objetivo
+# Función objetivo
 Model.obj = Objective(expr=sum(Model.x[i, j] * recursos[j][0] for i in p for j in t), sense=maximize)
 
 # Restricciones
