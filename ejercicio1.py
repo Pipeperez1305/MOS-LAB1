@@ -40,7 +40,7 @@ valor = {
 Model.x = Var(p, domain=Binary)
 
 # Función objetivo
-Model.obj = Objective(expr = sum(Model.x[p,t]*valor[i][1] for i in p), sense=maximize)
+Model.obj = Objective(expr = sum(Model.x[i]*valor[i][1] for i in p), sense=maximize)
 
 # Restricciones
 Model.res1 = Constraint(expr = sum(Model.x[i]*valor[i][0] for i in p) <=52)
